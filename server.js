@@ -1,14 +1,11 @@
-const Order = require("./models/Order");
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const User = require("./models/User");
+const path = require("path");
 
-const app = express();
-
-app.use(bodyParser.json());
-
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 mongoose.connect(
   "mongodb://127.0.0.1:27017/ecommerceDB"
