@@ -1,65 +1,33 @@
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 
+const app = express(); // 🔥 MUST BE BEFORE app.use()
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Static files
 app.use(express.static(path.join(__dirname, "public")));
+
+// MongoDB
+console.log("MONGO:", process.env.MONGO_URI);
+
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log("MongoDB Connected"))
+.catch(err => console.log("MongoDB Error:", err));
+
+// Routes
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+    res.send("Server is running 🚀");
 });
 
-mongoose.connect(
-  "mongodb://127.0.0.1:27017/ecommerceDB"
-)
-.then(() => {
-  console.log("MongoDB Connected");
-})
-.catch((err) => {
-  console.log(err);
-});
-app.post("/save-user", async (req, res) => {
+// Port (Render friendly)
+const PORT = process.env.PORT || 3000;
 
-  try {
-
-    const user = new User(req.body);
-
-    await user.save();
-
-    res.json({
-      message: "User Saved Successfully"
-    });
-
-  } catch (error) {
-
-    res.status(500).json({
-      message: "Error Saving User"
-    });
-
-  }
-
-});
-
-app.post("/save-order", async (req, res) => {
-
-  try {
-
-    const order = new Order(req.body);
-
-    await order.save();
-
-    res.json({
-      message: "Order Saved Successfully"
-    });
-
-  } catch (error) {
-
-    res.status(500).json({
-      message: "Error Saving Order"
-    });
-
-  }
-
-});
-
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+app.listen(PORT, () => {
+    console.log("Server running on port", PORT);
 });
